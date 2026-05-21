@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GamePay - Top Up Game Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4338ca;
+            --secondary: #ec4899;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.8);
+            --bg-input: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --radius: 16px;
+            --nav-height: 70px;
+            --checkout-height: 80px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: var(--nav-height);
+        }
+        
+        .glass {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+
+        /* HEADER */
+        header {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .desktop-nav { display: none; gap: 30px; }
+        .desktop-nav a { color: var(--text-muted); text-decoration: none; font-weight: 500; transition: color 0.3s; font-size: 0.95rem; position: relative; }
+        .desktop-nav a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background: var(--primary); transition: width 0.3s; }
+        .desktop-nav a:hover::after, .desktop-nav a.active::after { width: 100%; }
+        .desktop-nav a:hover, .desktop-nav a.active { color: white; }
+
+        /* MAIN CONTENT */
+        main {
+            width: 100%;
+            max-width: 800px; /* Lebih fokus untuk mobile */
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        /* BANNER SLIDER */
+        .banner-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .banner-slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+        }
+
+        .banner-slide.active { opacity: 1; }
+        .banner-content { background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 8px; backdrop-filter: blur(4px); }
+        .banner-title { font-weight: 700; font-size: 1.1rem; color: white; }
+        .banner-sub { font-size: 0.8rem; color: #fbbf24; }
+
+        /* SEARCH BAR */
+        .search-bar {
+            background: var(--bg-input);
+            border-radius: 50px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .search-bar:focus-within { border-color: var(--primary); box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
+        .search-bar input { background: transparent; border: none; color: white; width: 100%; outline: none; font-size: 0.95rem; }
+
+        .section-title { margin-bottom: 15px; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .section-title::before { content: ''; display: block; width: 5px; height: 20px; background: var(--primary); border-radius: 10px; }
+
+        /* GAME GRID */
+        .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .game-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+        .game-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); border-color: var(--primary); }
+        .game-img { width: 100%; height: 140px; object-fit: cover; background: #000; transition: transform 0.3s; }
+        .game-card:hover .game-img { transform: scale(1.05); }
+        .game-info { padding: 12px; position: relative; z-index: 2; background: var(--bg-card); }
+        .game-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .game-publisher { font-size: 0.7rem; color: var(--text-muted); }
+
+        /* SKELETON */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-input) 50%, var(--bg-card) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius);
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* DETAIL PAGE */
+        .detail-container { max-width: 800px; margin: 0 auto; padding-bottom: 90px; /* Space for sticky footer */ }
+        
+        .detail-header {
+            background: linear-gradient(to right, rgba(99, 102, 241, 0.2), transparent);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .detail-img { width: 80px; height: 80px; border-radius: 16px; object-fit: cover; border: 2px solid var(--primary); box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); }
+
+        .form-section {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .step-number {
+            display: inline-flex; width: 28px; height: 28px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; border-radius: 8px;
+            align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: bold; margin-right: 10px;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
+        }
+
+        .section-label { display: flex; align-items: center; font-weight: 700; margin-bottom: 15px; font-size: 1rem; }
+
+        /* Dynamic Input Wrapper */
+        .dynamic-inputs { display: flex; flex-direction: column; gap: 15px; }
+        .input-wrapper { position: relative; width: 100%; }
+        
+        .form-input {
+            width: 100%; background: var(--bg-input);
+            border: 2px solid transparent; color: white;
+            padding: 14px; padding-right: 45px; border-radius: 12px;
+            outline: none; transition: 0.2s; font-weight: 500;
+        }
+        .form-input:focus { border-color: var(--primary); background: rgba(51, 65, 85, 0.8); }
+        .form-input.error { border-color: var(--danger); }
+        .error-msg { color: var(--danger); font-size: 0.75rem; margin-top: 5px; display: none; margin-left: 5px;}
+        .input-label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; display: block; }
+
+        .copy-btn {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.1); border: none; color: var(--text-muted);
+            cursor: pointer; font-size: 0.9rem; padding: 6px; border-radius: 6px; transition: 0.2s;
+        }
+        .copy-btn:hover { background: var(--primary); color: white; }
+
+        /* GRID OPTIONS */
+        .grid-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .option-card {
+            background: var(--bg-input); border: 2px solid transparent; padding: 15px;
+            border-radius: 12px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;
+        }
+        .option-card.selected { border-color: var(--primary); background: rgba(99, 102, 241, 0.15); box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); }
+        .option-card.selected::after { content: '✓'; position: absolute; top: 0; right: 0; background: var(--primary); color: white; font-size: 0.7rem; padding: 2px 6px; border-bottom-left-radius: 10px; }
+        .option-amount { font-weight: 700; font-size: 0.95rem; display: block; color: white;}
+        .option-price { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; display: block; }
+
+        .payment-list { display: flex; flex-direction: column; gap: 12px; }
+        .payment-item {
+            background: var(--bg-input); padding: 15px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; border: 2px solid transparent; transition: 0.2s;
+        }
+        .payment-item.selected { border-color: var(--primary); background: rgba(99, 102, 241, 0.15); }
+        .payment-logo { font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; }
+        
+        .pay-badge { width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800; color: white; }
+        .bg-qris { background: #ed1c24; } .bg-dana { background: #118eea; } .bg-gopay { background: #00aeb6; }
+        .bg-ovo { background: #4c3494; } .bg-shopee { background: #ee4d2d; } .bg-bank { background: #f59e0b; }
+        .payment-price { font-weight: 600; color: var(--primary); font-size: 0.9rem; }
+
+        /* PROMO INPUT */
+        .promo-group { display: flex; gap: 10px; }
+        .btn-apply {
+            background: var(--primary); color: white; border: none; padding: 0 20px;
+            border-radius: 12px; font-weight: 600; cursor: pointer;
+        }
+        .btn-apply:hover { background: var(--primary-dark); }
+
+        /* STICKY CHECKOUT FOOTER */
+        .sticky-checkout {
+            position: fixed; bottom: var(--nav-height); left: 0; width: 100%;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
+            padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 90; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            transform: translateY(150%); /* Hidden by default */
+        }
+        .sticky-checkout.visible { transform: translateY(0); }
+        
+        .total-label { font-size: 0.75rem; color: var(--text-muted); }
+        .total-price { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+        
+        .btn-checkout {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; border: none; border-radius: 30px;
+            padding: 10px 24px; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+        .btn-checkout:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+
+        /* HISTORY */
+        .history-list { display: flex; flex-direction: column; gap: 15px; max-width: 800px; margin: 0 auto; }
+        .history-item {
+            background: var(--bg-card); border-radius: var(--radius); padding: 15px;
+            display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .history-icon { width: 50px; height: 50px; background: var(--bg-input); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; overflow: hidden; flex-shrink: 0; }
+        .history-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .history-details { flex: 1; }
+        .history-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+        .history-date { font-size: 0.75rem; color: var(--text-muted); }
+        .history-status { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .status-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-pending { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+
+        /* FAQ */
+        .faq-container { max-width: 800px; margin: 30px auto; }
+        .faq-item { background: var(--bg-card); border-radius: 12px; margin-bottom: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .faq-question { padding: 15px 20px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .faq-question:hover { background: rgba(255,255,255,0.05); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; padding: 0 20px; color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+        .faq-item.active .faq-answer { padding-bottom: 15px; }
+        .faq-icon { transition: transform 0.3s; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height);
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 100; box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.7rem; width: 60px; cursor: pointer; position: relative; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active::before { content: ''; position: absolute; top: 0; width: 30px; height: 3px; background: var(--primary); border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; }
+        .nav-icon { font-size: 1.5rem; margin-bottom: 2px; display: block; filter: grayscale(1); transition: 0.3s; }
+        .nav-item.active .nav-icon { filter: grayscale(0); transform: translateY(-3px); }
+
+        /* FAB */
+        .fab { position: fixed; bottom: 90px; right: 20px; width: 55px; height: 55px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4); cursor: pointer; z-index: 90; transition: transform 0.2s; font-size: 26px; }
+        .fab:hover { transform: scale(1.1) rotate(10deg); }
+
+        /* MODALS */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
+            padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box {
+            background: #1e293b; width: 100%; max-width: 400px; border-radius: 20px;
+            padding: 25px; text-align: center; transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-icon { font-size: 4rem; margin-bottom: 15px; display: inline-block; animation: bounceIn 0.6s; }
+        @keyframes bounceIn { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+
+        .receipt-details { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; margin: 15px 0; text-align: left; font-size: 0.9rem; }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px; }
+        .receipt-row:last-child { border-bottom: none; margin-bottom: 0; }
+        .receipt-label { color: var(--text-muted); font-size: 0.85rem; }
+        .receipt-value { font-weight: 600; color: white; }
+
+        /* QR Simulation */
+        .qr-placeholder {
+            width: 200px; height: 200px; background: white; margin: 20px auto;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .qr-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+
+        .btn-secondary { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); padding: 12px; border-radius: 50px; width: 100%; margin-top: 10px; cursor: pointer; font-weight: 600; }
+        .btn-secondary:hover { border-color: white; color: white; }
+
+        /* TOAST */
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 3000; display: flex; flex-direction: column; gap: 10px; width: 90%; max-width: 400px; }
+        .toast { background: #1e293b; color: white; padding: 12px 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; animation: slideDown 0.3s ease-out forwards; border-left: 4px solid var(--primary); }
+        .toast.success { border-left-color: var(--success); } .toast.error { border-left-color: var(--danger); }
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
+
+        @media (min-width: 768px) {
+            body { padding-bottom: 0; } main { max-width: 1000px; padding: 40px 20px; }
+            .desktop-nav { display: flex; } .bottom-nav { display: none; } .fab { bottom: 40px; right: 40px; }
+            .game-grid { grid-template-columns: repeat(5, 1fr); } .grid-options { grid-template-columns: repeat(4, 1fr); }
+            .banner-container { height: 250px; }
+            .sticky-checkout { bottom: 0; } .detail-container { padding-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="glass">
+        <div class="header-content">
+            <div class="logo" onclick="navigateTo('beranda')">GamePay</div>
+            <nav class="desktop-nav">
+                <a href="#" onclick="navigateTo('beranda'); return false;" id="link-home">Beranda</a>
+                <a href="#" onclick="navigateTo('riwayat'); return false;" id="link-history">Riwayat</a>
+                <a href="#" onclick="navigateTo('profil'); return false;" id="link-profile">Profil</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="app"></main>
+
+    <div class="fab" onclick="window.open('https://wa.me/628123456789', '_blank')" title="Hubungi CS">💬</div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="navigateTo('beranda')" id="mob-home">
+            <span class="nav-icon">🏠</span><span>Beranda</span>
+        </div>
+        <div class="nav-item" onclick="navigateTo('riwayat')" id="mob-history">
+            <span class="nav-icon">📜</span><span>Riwayat</span>
+        </div>
+        <div class="nav-item" onclick="navigateTo('profil')" id="mob-profile">
+            <span class="nav-icon">👤</span><span>Profil</span>
+        </div>
+    </nav>
+
+    <!-- STICKY CHECKOUT (New Feature) -->
+    <div id="stickyCheckout" class="sticky-checkout">
+        <div>
+            <div class="total-label">Total Pembayaran</div>
+            <div class="total-price" id="stickyTotal">Rp 0</div>
+        </div>
+        <button class="btn-checkout" onclick="openConfirmModal()">Beli Sekarang</button>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <!-- MODAL KONFIRMASI -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-icon">🤔</div>
+            <h2>Konfirmasi Pesanan</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin:10px 0;">Mohon periksa kembali detail pesanan Anda.</p>
+            <div class="receipt-details">
+                <div class="receipt-row"><span class="receipt-label">Item</span><span class="receipt-value" id="conf-item">-</span></div>
+                <div class="receipt-row"><span class="receipt-label">ID User</span><span class="receipt-value" id="conf-id">-</span></div>
+                <div class="receipt-row"><span class="receipt-label">Pembayaran</span><span class="receipt-value" id="conf-pay">-</span></div>
+                <div class="receipt-row"><span class="receipt-label">Diskon</span><span class="receipt-value" id="conf-disc" style="color:var(--success)">Rp 0</span></div>
+                <div class="receipt-row"><span class="receipt-label">Total</span><span class="receipt-value" style="color:var(--primary); font-weight:700; font-size:1.1rem;" id="conf-price">-</span></div>
+            </div>
+            <button class="btn-checkout" id="btnConfirmPay" onclick="openPaymentGateway()">Lanjut Pembayaran</button>
+            <button class="btn-secondary" onclick="closeModal('confirmModal')">Batal</button>
+        </div>
+    </div>
+
+    <!-- MODAL PAYMENT GATEWAY (New Feature) -->
+    <div id="paymentModal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-bottom:10px;">Scan QRIS</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:15px;">Silakan scan QR di bawah ini menggunakan e-wallet Anda.</p>
+            
+            <div class="qr-placeholder">
+                <!-- Simulasi QR Real -->
+                <img id="qrisImage" src="" alt="QRIS Code">
+            </div>
+            
+            <div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; margin-bottom:15px;">
+                <div style="font-size:0.8rem; color:var(--text-muted);">Total Bayar</div>
+                <div style="font-size:1.2rem; font-weight:bold; color:var(--primary);" id="modalTotal">Rp 0</div>
+            </div>
+
+            <button class="btn-checkout" style="background:var(--success);" onclick="confirmSuccess()">Saya Sudah Bayar</button>
+            <button onclick="closeModal('paymentModal')" style="background:none; border:none; color:var(--text-muted); margin-top:15px; cursor:pointer;">Batalkan</button>
+        </div>
+    </div>
+
+    <!-- MODAL SUKSES -->
+    <div id="successModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-icon">🎉</div>
+            <h2>Pembelian Berhasil!</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin:5px 0;">Diamond akan masuk dalam 1-5 menit.</p>
+            <div class="receipt-details">
+                <div class="receipt-row"><span class="receipt-label">ID Transaksi</span><span class="receipt-value" id="succ-trx-id">#TRX-000</span></div>
+                <div class="receipt-row"><span class="receipt-label">Item</span><span class="receipt-value" id="succ-item">-</span></div>
+                <div class="receipt-row"><span class="receipt-label">Total Bayar</span><span class="receipt-value" style="color:var(--primary)" id="succ-price">-</span></div>
+            </div>
+            <button class="btn-checkout" style="background: #25D366;" onclick="shareToWA()">📤 Kirim Bukti ke WA</button>
+            <button class="btn-secondary" onclick="closeModal('successModal'); navigateTo('riwayat');">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STATE ---
+        // Menambahkan konfigurasi input dinamis per game
+        const games = [
+            { 
+                id: 1, name: 'Mobile Legends', publisher: 'Moonton', img: 'Mobile Legends.jpg',
+                currency: 'Diamonds',
+                fields: [
+                    { name: 'userId', label: 'User ID', type: 'number', placeholder: '12345678' },
+                    { name: 'zoneId', label: 'Zone ID', type: 'number', placeholder: '1234' }
+                ]
+            },
+            { 
+                id: 2, name: 'PUBG Mobile', publisher: 'Tencent', img: 'pubg.jpg',
+                currency: 'UC',
+                fields: [
+                    { name: 'userId', label: 'User ID', type: 'number', placeholder: '512345678' }
+                ]
+            },
+            { 
+                id: 3, name: 'Free Fire', publisher: 'Garena', img: 'ff.jpg',
+                currency: 'Diamonds',
+                fields: [
+                    { name: 'userId', label: 'Player ID', type: 'number', placeholder: '123456789' }
+                ]
+            },
+            { 
+                id: 4, name: 'Genshin Impact', publisher: 'HoYoverse', img: 'genshin.jpg',
+                currency: 'Genesis Crystals',
+                fields: [
+                    { name: 'uid', label: 'UID', type: 'number', placeholder: '800123456' },
+                    { name: 'server', label: 'Server', type: 'select', options: ['Asia', 'America', 'Europe', 'TW/HK/MO'] }
+                ]
+            },
+            { 
+                id: 5, name: 'Valorant', publisher: 'Riot Games', img: 'Valorant Icon.jpg',
+                currency: 'VP',
+                fields: [
+                    { name: 'username', label: 'Riot ID', type: 'text', placeholder: 'Name#Tag' }
+                ]
+            }
+        ];
+
+        const banners = [
+            { img: 'https://picsum.photos/seed/promo1/800/400', title: 'Diskon 50% Top Up Pertama', sub: 'Kode Baru: NEW50' },
+            { img: 'https://picsum.photos/seed/promo2/800/400', title: 'Event Spesial Weekend', sub: 'Bonus Cashback hingga 20k' },
+            { img: 'https://picsum.photos/seed/promo3/800/400', title: 'Member Premium', sub: 'Dapatkan akses prioritas' }
+        ];
+
+        const faqs = [
+            { q: "Berapa lama proses top up?", a: "Proses top up otomatis memakan waktu 1-5 menit setelah pembayaran berhasil." },
+            { q: "Bagaimana jika diamond tidak masuk?", a: "Silakan hubungi CS kami melalui tombol WhatsApp di pojok kanan bawah dengan melampirkan bukti pembayaran." },
+            { q: "Metode pembayaran apa yang tersedia?", a: "Kami menerima QRIS, Dana, GoPay, OVO, ShopeePay, dan Transfer Bank." }
+        ];
+
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+        };
+
+        // Load dari LocalStorage (New Feature)
+        let transactions = JSON.parse(localStorage.getItem('gamepay_history')) || [
+            { id: 'TRX-001', date: '2023-10-25', item: 'Mobile Legends - 86 Diamonds', price: 20000, status: 'success', gameImg: 'Mobile Legends.jpg' },
+        ];
+
+        // State tambahan untuk Promo
+        let currentOrder = { game: null, inputData: {}, item: null, payment: null, promo: null, discountAmount: 0 };
+        let currentTrxId = '';
+
+        // --- BANNER SLIDER LOGIC ---
+        let currentBanner = 0;
+        function startBannerSlider() {
+            const container = document.getElementById('bannerContainer');
+            if (!container) return;
+            setInterval(() => {
+                const slides = container.querySelectorAll('.banner-slide');
+                slides[currentBanner].classList.remove('active');
+                currentBanner = (currentBanner + 1) % slides.length;
+                slides[currentBanner].classList.add('active');
+            }, 4000);
+        }
+
+        // --- VIEWS ---
+        const renderSkeleton = () => {
+            return `
+                <div class="banner-container skeleton" style="height:180px; margin-bottom:25px;"></div>
+                <div class="game-grid">
+                    ${Array(6).fill(0).map(() => `
+                        <div style="background:var(--bg-card); border-radius:var(--radius); overflow:hidden;">
+                            <div class="skeleton" style="height:140px;"></div>
+                            <div style="padding:12px;">
+                                <div class="skeleton" style="height:15px; width:80%; margin-bottom:5px; border-radius:4px;"></div>
+                                <div class="skeleton" style="height:10px; width:50%; border-radius:4px;"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        };
+
+        const renderBeranda = () => {
+            setTimeout(startBannerSlider, 100);
+            return `
+                <div class="banner-container" id="bannerContainer">
+                    ${banners.map((b, idx) => `
+                        <div class="banner-slide ${idx === 0 ? 'active' : ''}" style="background-image: url('${b.img}');">
+                            <div class="banner-content">
+                                <div class="banner-title">${b.title}</div>
+                                <div class="banner-sub">${b.sub}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="search-bar">
+                    <span>🔍</span>
+                    <input type="text" id="searchInput" placeholder="Cari game favoritmu..." onkeyup="filterGames()">
+                </div>
+                <h2 class="section-title">Game Populer</h2>
+                <div class="game-grid" id="gameList">
+                    ${games.map(game => createGameCard(game)).join('')}
+                </div>
+                <div id="noResults" class="text-center hidden" style="padding:40px; color:var(--text-muted)">
+                    <div style="font-size:3rem; margin-bottom:10px;">😕</div>
+                    <p>Game tidak ditemukan</p>
+                </div>
+                <div class="faq-container">
+                    <h2 class="section-title">Pertanyaan Umum (FAQ)</h2>
+                    ${faqs.map((f, i) => `
+                        <div class="faq-item" onclick="toggleFAQ(this)">
+                            <div class="faq-question">${f.q} <span class="faq-icon">▼</span></div>
+                            <div class="faq-answer"><p style="padding-top:10px;">${f.a}</p></div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        };
+
+        const createGameCard = (game) => {
+            return `
+                <div class="game-card" onclick="openDetail(${game.id})">
+                    <img src="${game.img}" alt="${game.name}" class="game-img" onerror="this.src='https://picsum.photos/seed/${game.name}/300/200'">
+                    <div class="game-info">
+                        <div class="game-name">${game.name}</div>
+                        <div class="game-publisher">${game.publisher}</div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Perubahan Besar: RenderDetail sekarang Dinamis
+        const renderDetail = () => {
+            if (!currentOrder.game) return '<div class="text-center" style="padding:50px">Game tidak ditemukan</div>';
+
+            const nominals = generateItems(currentOrder.game.currency);
+            const payments = [
+                { id: 'qris', name: 'QRIS', fee: 0, cls: 'bg-qris', txt: 'QR' },
+                { id: 'dana', name: 'Dana', fee: 500, cls: 'bg-dana', txt: 'DN' },
+                { id: 'gopay', name: 'GoPay', fee: 1000, cls: 'bg-gopay', txt: 'GP' },
+                { id: 'ovo', name: 'OVO', fee: 1000, cls: 'bg-ovo', txt: 'OV' },
+                { id: 'shopee', name: 'ShopeePay', fee: 750, cls: 'bg-shopee', txt: 'SP' },
+                { id: 'bank', name: 'Bank Transfer', fee: 2000, cls: 'bg-bank', txt: 'VA' },
+            ];
+
+            // Render Input Dinamis
+            const inputsHtml = currentOrder.game.fields.map(field => {
+                if (field.type === 'select') {
+                    return `
+                        <div class="input-wrapper">
+                            <label class="input-label">${field.label}</label>
+                            <select class="form-input" onchange="updateInput('${field.name}', this.value)">
+                                <option value="">Pilih Server</option>
+                                ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                            </select>
+                        </div>`;
+                }
+                return `
+                    <div class="input-wrapper">
+                        <label class="input-label">${field.label}</label>
+                        <input type="${field.type}" class="form-input" placeholder="${field.placeholder}" 
+                            oninput="updateInput('${field.name}', this.value); clearError(this)">
+                        <button class="copy-btn" onclick="copyValue(this)">📋</button>
+                        <div class="error-msg">Wajib diisi</div>
+                    </div>`;
+            }).join('');
+
+            return `
+                <div class="detail-container">
+                    <div onclick="navigateTo('beranda')" style="cursor:pointer; color:var(--text-muted); margin-bottom:20px; display:flex; align-items:center; gap:8px; font-weight:500;">← Kembali</div>
+                    <div class="detail-header">
+                        <img src="${currentOrder.game.img}" class="detail-img" onerror="this.src='https://picsum.photos/seed/${currentOrder.game.name}/100/100'">
+                        <div>
+                            <h1 style="font-size:1.3rem; margin-bottom:5px;">${currentOrder.game.name}</h1>
+                            <p style="color:var(--text-muted); font-size:0.9rem;">Layanan aktif 24 Jam • Proses Otomatis</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Input Dinamis -->
+                    <div class="form-section">
+                        <div class="section-label"><span class="step-number">1</span> Masukkan Data Akun</div>
+                        <div class="dynamic-inputs" id="dynamicInputs">
+                            ${inputsHtml}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-label"><span class="step-number">2</span> Pilih Nominal</div>
+                        <div class="grid-options">
+                            ${nominals.map((n, idx) => `
+                                <div class="option-card" id="item-${idx}" onclick="selectItem(${idx}, '${n.amount}', ${n.price})">
+                                    <span class="option-amount">${n.amount}</span>
+                                    <span class="option-price">${formatRupiah(n.price)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <div class="section-label"><span class="step-number">3</span> Pilih Pembayaran</div>
+                        <div class="payment-list">
+                            ${payments.map((p, idx) => `
+                                <div class="payment-item" id="pay-${idx}" onclick="selectPayment(${idx}, '${p.name}', ${p.fee})">
+                                    <span class="payment-logo"><div class="pay-badge ${p.cls}">${p.txt}</div> ${p.name}</span>
+                                    <span class="payment-price">${p.fee > 0 ? '+ ' + formatRupiah(p.fee) : 'Bebas Admin'}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Input Promo (New Feature) -->
+                    <div class="form-section">
+                        <div class="section-label"><span class="step-number">4</span> Kode Promo</div>
+                        <div class="promo-group">
+                            <input type="text" id="promoInput" class="form-input" placeholder="Coba kode: NEW50">
+                            <button class="btn-apply" onclick="applyPromo()">Gunakan</button>
+                        </div>
+                        <div id="promoMsg" style="font-size:0.75rem; margin-top:5px; display:none;"></div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderRiwayat = () => {
+            if (transactions.length === 0) {
+                return `
+                    <div class="text-center" style="padding: 50px 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">📭</div>
+                        <h3>Belum ada transaksi</h3>
+                        <p style="color:var(--text-muted); margin-bottom:20px;">Yuk top up game favoritmu sekarang!</p>
+                        <button class="btn-checkout" onclick="navigateTo('beranda')" style="width:auto; padding: 12px 30px;">Cari Game</button>
+                    </div>
+                `;
+            }
+            return `
+                <h2 class="section-title">Riwayat Transaksi</h2>
+                <div class="history-list">
+                    ${transactions.map(trx => `
+                        <div class="history-item">
+                            <div class="history-icon">
+                                <img src="${trx.gameImg || ''}" alt="" onerror="this.style.display='none'; this.parentNode.textContent='🎮';">
+                            </div>
+                            <div class="history-details">
+                                <div class="history-title">${trx.item}</div>
+                                <div class="history-date">${trx.date} • ${trx.id}</div>
+                            </div>
+                            <div style="text-align:right">
+                                <div style="font-weight:700;">${formatRupiah(trx.price)}</div>
+                                <div class="history-status ${trx.status === 'success' ? 'status-success' : 'status-pending'}">
+                                    ${trx.status === 'success' ? 'Sukses' : 'Proses'}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        };
+
+        const renderProfil = () => {
+            return `
+                <div class="profile-container">
+                    <div class="detail-header" style="justify-content:center; flex-direction:column; text-align:center;">
+                        <div style="width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg, var(--primary), var(--secondary)); display:flex; align-items:center; justify-content:center; font-size:2.5rem; color:white; margin-bottom:15px; box-shadow: 0 0 20px rgba(99,102,241,0.5);">👤</div>
+                        <h2>Arvin Adinata</h2>
+                        <p style="color:var(--text-muted)">Member sejak 2023</p>
+                    </div>
+                    <h2 class="section-title">Pengaturan Akun</h2>
+                    <div class="menu-list" style="background:var(--bg-card); border-radius:12px; overflow:hidden;">
+                        <div class="payment-item" style="cursor:pointer;" onclick="showToast('Fitur verifikasi belum tersedia', 'warning')"><span>Verifikasi Akun</span><span>→</span></div>
+                        <div class="payment-item" style="cursor:pointer;" onclick="showToast('Tidak ada notifikasi baru', 'success')"><span>Pusat Bantuan</span><span>→</span></div>
+                        <div class="payment-item" style="cursor:pointer; color:var(--danger)" onclick="showToast('Logout berhasil', 'success'); setTimeout(()=> navigateTo('beranda'), 1000)"><span>Keluar</span><span>🚪</span></div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // --- NAVIGATION ---
+        function navigateTo(page) {
+            const app = document.getElementById('app');
+            const mobItems = document.querySelectorAll('.bottom-nav .nav-item');
+            mobItems.forEach(item => item.classList.remove('active'));
+            if (page === 'beranda') document.getElementById('mob-home').classList.add('active');
+            if (page === 'riwayat') document.getElementById('mob-history').classList.add('active');
+            if (page === 'profil') document.getElementById('mob-profile').classList.add('active');
+
+            const deskLinks = document.querySelectorAll('.desktop-nav a');
+            deskLinks.forEach(link => link.classList.remove('active'));
+            if (page === 'beranda') document.getElementById('link-home').classList.add('active');
+            if (page === 'riwayat') document.getElementById('link-history').classList.add('active');
+            if (page === 'profil') document.getElementById('link-profile').classList.add('active');
+
+            // Toggle Sticky Checkout
+            const sticky = document.getElementById('stickyCheckout');
+            if (page !== 'detail') sticky.classList.remove('visible');
+
+            if (page === 'beranda') {
+                app.innerHTML = renderSkeleton();
+                setTimeout(() => { app.innerHTML = renderBeranda(); }, 800);
+            } else if (page === 'riwayat') {
+                app.innerHTML = renderRiwayat();
+            } else if (page === 'profil') {
+                app.innerHTML = renderProfil();
+            } else if (page === 'detail') {
+                app.innerHTML = renderDetail();
+                sticky.classList.add('visible');
+            }
+            window.scrollTo(0, 0);
+        }
+
+        // --- FEATURES ---
+        function filterGames() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const gameListEl = document.getElementById('gameList');
+            const noResultsEl = document.getElementById('noResults');
+            const filtered = games.filter(g => g.name.toLowerCase().includes(query));
+            if (filtered.length === 0) {
+                gameListEl.classList.add('hidden');
+                noResultsEl.classList.remove('hidden');
+            } else {
+                gameListEl.classList.remove('hidden');
+                noResultsEl.classList.add('hidden');
+                gameListEl.innerHTML = filtered.map(game => createGameCard(game)).join('');
+            }
+        }
+
+        function toggleFAQ(element) {
+            document.querySelectorAll('.faq-item').forEach(item => { if(item !== element) item.classList.remove('active'); });
+            element.classList.toggle('active');
+        }
+
+        function copyValue(btn) {
+            const input = btn.previousElementSibling;
+            if (input && input.value) {
+                navigator.clipboard.writeText(input.value).then(() => { showToast('ID berhasil disalin!', 'success'); });
+            } else {
+                showToast('Ketik ID dulu', 'warning');
+                input.focus();
+            }
+        }
+
+        function clearError(element) {
+            if (element.classList.contains('error')) {
+                element.classList.remove('error');
+                const msg = element.parentElement.querySelector('.error-msg');
+                if(msg) msg.style.display = 'none';
+            }
+        }
+
+        function openDetail(gameId) {
+            const game = games.find(g => g.id === gameId);
+            if (game) {
+                // Reset State
+                currentOrder = { game, inputData: {}, item: null, payment: null, promo: null, discountAmount: 0 };
+                document.getElementById('promoInput').value = '';
+                document.getElementById('promoMsg').style.display = 'none';
+                navigateTo('detail');
+            }
+        }
+
+        // Helper: Generate Items based on currency
+        function generateItems(currency) {
+            const base = currency === 'UC' ? 15000 : (currency === 'VP' ? 12000 : 3000);
+            return [
+                { amount: `5 ${currency}`, price: base * 1 },
+                { amount: `12 ${currency}`, price: base * 2.5 },
+                { amount: `50 ${currency}`, price: base * 10 },
+                { amount: `70 ${currency}`, price: base * 14 },
+                { amount: `150 ${currency}`, price: base * 30 },
+                { amount: `350 ${currency}`, price: base * 70 },
+                { amount: `500 ${currency}`, price: base * 100 },
+                { amount: `1000 ${currency}`, price: base * 200 },
+            ];
+        }
+
+        function updateInput(field, value) { 
+            currentOrder.inputData[field] = value; 
+        }
+
+        function selectItem(idx, amount, price) {
+            document.querySelectorAll('.option-card').forEach(el => el.classList.remove('selected'));
+            document.getElementById('item-' + idx).classList.add('selected');
+            currentOrder.item = { amount, price };
+            // Recalculate Promo if exists
+            if(currentOrder.promo === 'NEW50') applyPromo(); 
+            else calculateTotal();
+        }
+
+        function selectPayment(idx, name, fee) {
+            document.querySelectorAll('.payment-item').forEach(el => el.classList.remove('selected'));
+            document.getElementById('pay-' + idx).classList.add('selected');
+            currentOrder.payment = { name, fee };
+            calculateTotal();
+        }
+
+        // Fitur Baru: Apply Promo
+        function applyPromo() {
+            const code = document.getElementById('promoInput').value.toUpperCase();
+            const msg = document.getElementById('promoMsg');
+            
+            if (code === 'NEW50') {
+                currentOrder.discountAmount = 0.5; // 50%
+                currentOrder.promo = code;
+                msg.style.display = 'block';
+                msg.style.color = 'var(--success)';
+                msg.textContent = 'Kode promo digunakan! Diskon 50%.';
+                showToast('Promo berhasil diterapkan!', 'success');
+            } else {
+                currentOrder.discountAmount = 0;
+                currentOrder.promo = null;
+                msg.style.display = 'block';
+                msg.style.color = 'var(--danger)';
+                msg.textContent = 'Kode promo tidak valid.';
+            }
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            if (!currentOrder.item) return;
+            
+            let price = currentOrder.item.price;
+            
+            // Apply Discount
+            if (currentOrder.discountAmount > 0) {
+                price = price - (price * currentOrder.discountAmount);
+            }
+
+            const fee = currentOrder.payment ? currentOrder.payment.fee : 0;
+            const total = price + fee;
+
+            // Update Sticky UI
+            const stickyTotal = document.getElementById('stickyTotal');
+            if(stickyTotal) stickyTotal.textContent = formatRupiah(total);
+        }
+
+        // --- TRANSACTION FLOW ---
+        function openConfirmModal() {
+            // Validate Dynamic Inputs
+            let isValid = true;
+            const inputs = document.querySelectorAll('#dynamicInputs .form-input');
+            
+            inputs.forEach(input => {
+                if (!input.value) {
+                    input.classList.add('error');
+                    input.parentElement.querySelector('.error-msg').style.display = 'block';
+                    isValid = false;
+                }
+            });
+
+            if (!currentOrder.item)    { showToast('Pilih nominal dulu', 'error'); return; }
+            if (!currentOrder.payment) { showToast('Pilih pembayaran dulu', 'error'); return; }
+            if (!isValid) { showToast('Lengkapi data merah', 'error'); return; }
+
+            // Calculate Logic again for modal display
+            let price = currentOrder.item.price;
+            if (currentOrder.discountAmount > 0) price = price * (1 - currentOrder.discountAmount);
+            const fee = currentOrder.payment.fee;
+            const total = price + fee;
+            const discountVal = currentOrder.item.price * currentOrder.discountAmount;
+
+            // Format ID User String
+            const idString = Object.values(currentOrder.inputData).join(' / ');
+
+            document.getElementById('conf-item').textContent = currentOrder.game.name + ' - ' + currentOrder.item.amount;
+            document.getElementById('conf-id').textContent = idString;
+            document.getElementById('conf-pay').textContent = currentOrder.payment.name;
+            document.getElementById('conf-disc').textContent = currentOrder.promo ? '-' + formatRupiah(discountVal) : 'Rp 0';
+            document.getElementById('conf-price').textContent = formatRupiah(total);
+
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        // Fitur Baru: Payment Gateway
+        function openPaymentGateway() {
+            closeModal('confirmModal');
+            
+            let price = currentOrder.item.price;
+            if (currentOrder.discountAmount > 0) price = price * (1 - currentOrder.discountAmount);
+            const fee = currentOrder.payment.fee;
+            const total = price + fee;
+
+            // Setup Modal
+            document.getElementById('modalTotal').textContent = formatRupiah(total);
+            // Generate QR Code Fake (menggunakan API QR Server untuk tampilan real)
+            const qrData = `GAMEPAY-${Date.now()}-${total}`;
+            document.getElementById('qrisImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}&color=0f172a&bgcolor=ffffff`;
+            
+            document.getElementById('paymentModal').classList.add('active');
+        }
+
+        function confirmSuccess() {
+            const btn = document.querySelector('#paymentModal .btn-checkout');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loader"></div> Memproses...';
+
+            setTimeout(() => {
+                let price = currentOrder.item.price;
+                if (currentOrder.discountAmount > 0) price = price * (1 - currentOrder.discountAmount);
+                const fee = currentOrder.payment.fee;
+                const finalPrice = price + fee;
+                
+                currentTrxId = 'TRX-' + Math.floor(100000 + Math.random() * 900000);
+                
+                const newTrx = {
+                    id: currentTrxId,
+                    date: new Date().toISOString().split('T')[0],
+                    item: currentOrder.game.name + ' - ' + currentOrder.item.amount,
+                    price: finalPrice,
+                    status: 'success',
+                    gameImg: currentOrder.game.img
+                };
+
+                transactions.unshift(newTrx);
+                // Save to LocalStorage (Fitur Baru)
+                localStorage.setItem('gamepay_history', JSON.stringify(transactions));
+
+                btn.disabled = false;
+                btn.textContent = originalText;
+                closeModal('paymentModal');
+                
+                // Show Success Modal
+                document.getElementById('succ-trx-id').textContent = '#' + currentTrxId;
+                document.getElementById('succ-item').textContent = currentOrder.game.name + ' - ' + currentOrder.item.amount;
+                document.getElementById('succ-price').textContent = formatRupiah(finalPrice);
+                document.getElementById('successModal').classList.add('active');
+
+            }, 2000);
+        }
+
+        function shareToWA() {
+            const text = `Halo Admin, saya sudah melakukan top up:\n\nItem: ${document.getElementById('succ-item').textContent}\nID Transaksi: ${document.getElementById('succ-trx-id').textContent}\nTotal: ${document.getElementById('succ-price').textContent}\n\nMohon diproses ya!`;
+            const url = `https://wa.me/628123456789?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function showToast(message, type) {
+            type = type || 'success';
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            const icon = type === 'success' ? '✅' : (type === 'warning' ? '⚠️' : '❌');
+            toast.innerHTML = '<span>' + icon + '</span> <span>' + message + '</span>';
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        window.onload = () => { navigateTo('beranda'); };
+    </script>
+</body>
+</html>
